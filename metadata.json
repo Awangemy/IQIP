@@ -1,0 +1,6 @@
+{
+  "name": "IQIP Overwatch Hammer Operations",
+  "description": "High-tech monitoring, analytics, and pre-operation AI hammer recommendations for pile driving and excavation operations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,584 @@
+<ion-content class="main-page-content" scrollY="true" forceOverscroll="false">
+<div class="dashboard-container">
+  <div class="flex-between" style="margin-bottom: 16px; border-bottom: 1px solid var(--app-border); padding-bottom: 10px;">
+    <h2 class="panel-title" style="font-size: 1.1rem; letter-spacing: 1.5px;">
+      <lucide-icon name="line-chart" class="panel-icon"></lucide-icon>
+      Advanced Analytics & Decision Support
+    </h2>
+    <div class="panel-header-right">
+      <span class="status-badge-inline live" style="background: rgba(0, 240, 255, 0.1); border-color: var(--app-accent-cyan); color: var(--app-accent-cyan);">AI Engine: Active</span>
+      <ion-button size="small" fill="outline" class="industrial-btn" (click)="exportAllAnalytics()">
+        <lucide-icon name="download" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+        Export Analytics Report
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Industrial Tab Segment to navigate between 7 sections -->
+  <ion-segment [value]="activeTab" (ionChange)="onTabChange($event)" class="industrial-segment">
+    <ion-segment-button value="soil">
+      <ion-label>1. Soil Behaviour</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="stress">
+      <ion-label>2. Pile Stress</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="forecast">
+      <ion-label>3. AI Forecast</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="weather">
+      <ion-label>4. Weather Window</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="health">
+      <ion-label>5. Equipment Health</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="recs">
+      <ion-label>6. AI Rec Centre</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="twin">
+      <ion-label>7. Digital Twin</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- CONTENT PANELS BASED ON ACTIVE TAB -->
+
+  <!-- TAB 1: Soil Behaviour Intelligence -->
+  <div *ngIf="activeTab === 'soil'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="compass" class="panel-icon"></lucide-icon> Soil Behaviour Intelligence</h3>
+      <span class="status-badge-inline live">Continuous CPT Core Integration</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: start;">
+      <div>
+        <div class="ai-reasoning-box">
+          Continuous Cone Penetration Testing (CPT) telemetry is correlated in real time with hammer blow metrics to map soil density variations ahead of the pile tip.
+        </div>
+        <div class="metric-list" style="margin-bottom: 16px;">
+          <div class="metric-row">
+            <span class="metric-row-label">Current Soil Layer</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan); font-weight: 700;">Medium Dense Sand</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Predicted Next Layer</span>
+            <span class="metric-row-value" style="color: var(--app-accent-amber);">Dense Sand (at ~34.0m)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Rate of Penetration</span>
+            <span class="metric-row-value">{{ state.penetrationRate }} mm/blow</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Refusal Probability</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">12% (Low)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">CPT Correlation Index</span>
+            <span class="metric-row-value">0.87</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">AI Confidence Score</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">94%</span>
+          </div>
+        </div>
+
+        <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="predictNextLayer()">
+          <lucide-icon name="refresh-cw" style="width: 14px; height: 14px; margin-right: 6px;" [class.pulsing-indicator]="isPredictingSoil"></lucide-icon>
+          {{ isPredictingSoil ? 'Mapping Soil Strata...' : 'Predict Next Soil Layer' }}
+        </ion-button>
+      </div>
+
+      <!-- Soil resistance trend line chart -->
+      <div>
+        <div class="form-label" style="margin-bottom: 8px;">SOIL RESISTANCE TREND (Depth vs. kPa Resistance)</div>
+        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--app-border); border-radius: 6px; padding: 12px;">
+          <!-- SVG Line Chart representing depth penetration resistance -->
+          <svg viewBox="0 0 400 200" style="width: 100%; height: auto; overflow: visible;">
+            <!-- Grid lines -->
+            <line x1="40" y1="20" x2="380" y2="20" stroke="var(--app-grid-line)" stroke-dasharray="4"></line>
+            <line x1="40" y1="70" x2="380" y2="70" stroke="var(--app-grid-line)" stroke-dasharray="4"></line>
+            <line x1="40" y1="120" x2="380" y2="120" stroke="var(--app-grid-line)" stroke-dasharray="4"></line>
+            <line x1="40" y1="170" x2="380" y2="170" stroke="var(--app-grid-line)"></line>
+            
+            <line x1="40" y1="20" x2="40" y2="170" stroke="var(--app-grid-line)"></line>
+            <line x1="125" y1="20" x2="125" y2="170" stroke="var(--app-grid-line)" stroke-dasharray="4"></line>
+            <line x1="210" y1="20" x2="210" y2="170" stroke="var(--app-grid-line)" stroke-dasharray="4"></line>
+            <line x1="295" y1="20" x2="295" y2="170" stroke="var(--app-grid-line)" stroke-dasharray="4"></line>
+            <line x1="380" y1="20" x2="380" y2="170" stroke="var(--app-grid-line)"></line>
+
+            <!-- Text labels -->
+            <text x="35" y="173" fill="var(--app-text-muted)" font-size="9" text-anchor="end">Low</text>
+            <text x="35" y="95" fill="var(--app-text-muted)" font-size="9" text-anchor="end">Med</text>
+            <text x="35" y="25" fill="var(--app-text-muted)" font-size="9" text-anchor="end">High</text>
+            <text x="12" y="95" fill="var(--app-text-muted)" font-size="9" text-anchor="middle" transform="rotate(-90 12 95)">Resistance (kPa)</text>
+
+            <text x="40" y="185" fill="var(--app-text-muted)" font-size="9" text-anchor="middle">0m</text>
+            <text x="125" y="185" fill="var(--app-text-muted)" font-size="9" text-anchor="middle">12-28m</text>
+            <text x="210" y="185" fill="var(--app-text-muted)" font-size="9" text-anchor="middle">28-42m</text>
+            <text x="295" y="185" fill="var(--app-text-muted)" font-size="9" text-anchor="middle">&gt;42m</text>
+            <text x="210" y="198" fill="var(--app-text-muted)" font-size="9" text-anchor="middle" font-weight="600">Offshore Penetration Depth</text>
+
+            <!-- Shaded areas for layers -->
+            <rect x="40" y="20" width="85" height="150" fill="rgba(141, 110, 99, 0.05)"></rect>
+            <rect x="125" y="20" width="85" height="150" fill="rgba(255, 235, 156, 0.04)"></rect>
+            <rect x="210" y="20" width="85" height="150" fill="rgba(251, 192, 45, 0.06)"></rect>
+            <rect x="295" y="20" width="85" height="150" fill="rgba(120, 144, 156, 0.08)"></rect>
+
+            <!-- Line chart plot -->
+            <path d="M 40,165 C 80,150 100,135 125,115 C 150,110 180,95 210,82 C 240,78 270,60 295,45 C 320,40 350,30 380,22" 
+                  fill="none" 
+                  stroke="var(--app-accent-cyan)" 
+                  stroke-width="3"
+                  filter="drop-shadow(0 0 4px var(--app-accent-cyan))"></path>
+
+            <!-- Animated Dot at Current Position (~65% along path: Depth 32.4m) -->
+            <circle cx="265" cy="62" r="6" fill="var(--app-accent-cyan)"></circle>
+            <circle cx="265" cy="62" r="10" fill="none" stroke="var(--app-accent-cyan)" stroke-width="1.5" class="pulsing-indicator"></circle>
+          </svg>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--app-text-muted); margin-top: 6px;">
+          <span>✓ Interactive Zoom Enabled</span>
+          <span>CPT Correlation confidence: 99.1%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Dynamic Pile Stress Monitoring -->
+  <div *ngIf="activeTab === 'stress'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="shield" class="panel-icon"></lucide-icon> Dynamic Pile Stress Monitoring</h3>
+      <span class="status-badge-inline live">Fiber-optic Strain Sensors Active</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: start;">
+      <!-- Bar Chart for stress types -->
+      <div>
+        <div class="form-label" style="margin-bottom: 12px;">ALLOWABLE MARGIN CHART (% OF MATERIAL YIELD LIMIT)</div>
+        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+          <!-- Compression Bar -->
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div class="flex-between" style="font-size: 0.75rem;">
+              <span>Compression Stress</span>
+              <span style="font-weight: 700; color: var(--app-accent-amber);">62% (Allowable)</span>
+            </div>
+            <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; background: linear-gradient(90deg, var(--app-accent-cyan) 0%, var(--app-accent-amber) 100%); width: 62%;"></div>
+            </div>
+          </div>
+
+          <!-- Tension Bar -->
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div class="flex-between" style="font-size: 0.75rem;">
+              <span>Tension Stress</span>
+              <span style="font-weight: 700; color: var(--app-accent-green);">28% (Allowable)</span>
+            </div>
+            <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; background: var(--app-accent-green); width: 28%;"></div>
+            </div>
+          </div>
+
+          <!-- Bending Bar -->
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div class="flex-between" style="font-size: 0.75rem;">
+              <span>Bending Stress (Current Wave Tilt)</span>
+              <span style="font-weight: 700; color: var(--app-accent-green);">31% (Allowable)</span>
+            </div>
+            <div style="height: 12px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden;">
+              <div style="height: 100%; background: var(--app-accent-green); width: 31%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-row" style="margin-top: 16px; background: rgba(0, 240, 255, 0.02); border-color: var(--app-card-border);">
+          <span style="font-size: 0.75rem; color: var(--app-text-muted);">
+            Fatigue Accumulation Index: <strong style="color: var(--app-accent-green);">LOW</strong> | Remaining Allowable Margin: <strong style="color: var(--app-accent-cyan);">38%</strong>
+          </span>
+        </div>
+      </div>
+
+      <!-- Threshold warning settings and sliders -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px;">
+        <div class="form-label" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 6px;">ADJUST THRESHOLD ALERT LIMITS</div>
+        
+        <div class="slider-container">
+          <div class="slider-label-wrapper">
+            <span>Compression Limit</span>
+            <span style="color: var(--app-accent-cyan); font-weight: 600;">{{ compressionLimit }}%</span>
+          </div>
+          <input type="range" min="50" max="95" [(ngModel)]="compressionLimit" class="range-input">
+        </div>
+
+        <div class="slider-container">
+          <div class="slider-label-wrapper">
+            <span>Tension Limit</span>
+            <span style="color: var(--app-accent-cyan); font-weight: 600;">{{ tensionLimit }}%</span>
+          </div>
+          <input type="range" min="30" max="80" [(ngModel)]="tensionLimit" class="range-input">
+        </div>
+
+        <div class="slider-container" style="margin-bottom: 20px;">
+          <div class="slider-label-wrapper">
+            <span>Bending Limit</span>
+            <span style="color: var(--app-accent-cyan); font-weight: 600;">{{ bendingLimit }}%</span>
+          </div>
+          <input type="range" min="30" max="80" [(ngModel)]="bendingLimit" class="range-input">
+        </div>
+
+        <div class="grid-2">
+          <ion-button expand="block" fill="outline" class="industrial-btn" (click)="resetLimits()">
+            Reset
+          </ion-button>
+          <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="saveLimits()">
+            Set Alerts
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: AI Predictive Installation Forecast -->
+  <div *ngIf="activeTab === 'forecast'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="activity" class="panel-icon"></lucide-icon> AI Predictive Installation Forecast</h3>
+      <span class="status-badge-inline live">Forecast confidence: High</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: start;">
+      <div>
+        <div class="ai-reasoning-box">
+          The machine learning predictor combines previous North Sea driving runs in Block A with real-time penetration rate telemetry to forecast the remaining cycle duration.
+        </div>
+        
+        <div class="metric-list" style="margin-bottom: 16px;">
+          <div class="metric-row">
+            <span class="metric-row-label">Target Completion Depth</span>
+            <span class="metric-row-value">45.0 m</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Expected Completion Time</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan); font-weight: 700;">11:20 AM UTC</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Remaining Blows Predicted</span>
+            <span class="metric-row-value">680 blows</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Expected Average Penetration</span>
+            <span class="metric-row-value">17 mm/blow</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Confidence Level</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">92%</span>
+          </div>
+        </div>
+
+        <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="recalculateForecast()">
+          <lucide-icon name="refresh-cw" style="width: 14px; height: 14px; margin-right: 6px;" [class.pulsing-indicator]="isRecalculatingForecast"></lucide-icon>
+          {{ isRecalculatingForecast ? 'Running Predictions...' : 'Recalculate Forecast' }}
+        </ion-button>
+      </div>
+
+      <!-- Historical model accuracy gauge + chart -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
+        <div class="flex-between">
+          <div class="form-label">FORECAST ACCURACY (PREVIOUS 10 RUNS)</div>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--app-accent-green); font-weight: 700;">94% ACCURACY</span>
+        </div>
+
+        <div style="height: 90px; background: rgba(0,0,0,0.15); border-radius: 4px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px 16px 4px 16px; border: 1px solid rgba(255,255,255,0.02);">
+          <div *ngFor="let accurate of [89, 91, 93, 90, 94, 95, 92, 94, 96, 94]" style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="width: 12px; background: linear-gradient(180deg, var(--app-accent-cyan) 0%, rgba(0,240,255,0.1) 100%); border-radius: 2px 2px 0 0;" [style.height.px]="accurate - 20"></div>
+            <span style="font-size: 0.55rem; color: var(--app-text-muted);">{{ accurate }}%</span>
+          </div>
+        </div>
+        <div style="text-align: center; font-size: 0.65rem; color: var(--app-text-muted);">
+          Forecast algorithm is auto-updating via reinforcement learning.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Weather Window Intelligence -->
+  <div *ngIf="activeTab === 'weather'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="cloud-rain" class="panel-icon"></lucide-icon> Weather Window Intelligence</h3>
+      <span class="status-badge-inline caution">Meteorological Monitor active</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: start;">
+      <div>
+        <div class="form-label" style="margin-bottom: 12px;">HOURLY WINDOW WEATHER STATUS</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;">
+          <div *ngFor="let hour of forecastHours" class="industrial-card" style="padding: 10px; text-align: center; cursor: pointer; background: rgba(0,0,0,0.2);" (click)="selectForecastHour(hour)">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 0.8rem; font-weight: 700; margin-bottom: 4px;">{{ hour.time }}</div>
+            <div class="risk-badge" [ngClass]="hour.status.toLowerCase()" style="font-size: 0.55rem; padding: 1px 4px;">{{ hour.status }}</div>
+            <div style="font-size: 0.65rem; color: var(--app-text-muted); margin-top: 6px;">{{ hour.wave }}m Wave</div>
+          </div>
+        </div>
+
+        <div class="ai-reasoning-box" style="margin-bottom: 0;">
+          <strong>Optimal Piling Window:</strong> NOW until 16:00 UTC. Recommended Operating Mode: <strong>Normal</strong>. Wave height stays within limits. Winds stable. Vessel heave impact low.
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px;">
+        <div class="form-label" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 6px;">OPTIMAL WINDOW SCHEDULER</div>
+        
+        <div style="text-align: center; padding: 12px 0;">
+          <div style="font-size: 0.7rem; color: var(--app-text-muted); text-transform: uppercase;">Time Remaining in Favorable Window</div>
+          <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: var(--app-accent-green); text-shadow: 0 0 10px rgba(0,255,157,0.2);">
+            03h 48m 12s
+          </div>
+        </div>
+
+        <p style="font-size: 0.75rem; color: var(--app-text-muted); line-height: 1.4; margin-bottom: 16px;">
+          Schedule future lifts or pile handling actions using AI prediction of weather windows over the next 48 hours.
+        </p>
+
+        <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="openSchedulingModal()">
+          <lucide-icon name="calendar" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+          Schedule Lifting Window
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Equipment Health Prediction -->
+  <div *ngIf="activeTab === 'health'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="shield" class="panel-icon"></lucide-icon> Equipment Health & Diagnostics</h3>
+      <span class="status-badge-inline live">Sensor Integrity: 99.8%</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1fr 1.2fr; gap: 20px; align-items: start;">
+      <div>
+        <div class="gauge-container" style="padding: 0; margin-bottom: 16px;">
+          <div class="circular-gauge" style="width: 120px; height: 120px;">
+            <svg viewBox="0 0 150 150">
+              <circle class="bg-circle" cx="75" cy="75" r="65"></circle>
+              <!-- 94% of 408 is 383, offset is 25 -->
+              <circle class="fg-circle green" cx="75" cy="75" r="65" stroke-dashoffset="25"></circle>
+            </svg>
+            <div class="gauge-text-wrapper">
+              <span class="gauge-number" style="font-size: 1.5rem;">94%</span>
+              <span class="gauge-unit">Excellent</span>
+            </div>
+          </div>
+        </div>
+        
+        <p style="font-size: 0.75rem; color: var(--app-text-muted); text-align: center; margin-bottom: 16px;">
+          Hydraulic Power Pack temperatures are stabilized. Accumulator pressure is optimal.
+        </p>
+
+        <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="runDiagnostics()">
+          <lucide-icon name="refresh-cw" style="width: 14px; height: 14px; margin-right: 6px;" [class.pulsing-indicator]="isRunningDiag"></lucide-icon>
+          {{ isRunningDiag ? 'Analysing Sensor Nodes...' : 'Run Diagnostics' }}
+        </ion-button>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px;">
+        <div class="form-label" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 6px;">COMPONENT DIAGNOSTIC CORES</div>
+        
+        <div class="metric-list" style="margin-bottom: 16px;">
+          <div class="metric-row">
+            <span class="metric-row-label">Hydraulic Control Valve Core</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">96% (Good)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Hammer Anvil Cushion Stress</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">94% (Good)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Power Pack Generator load</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">92% (Good)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Sensor Transceiver Integrity</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan);">99% (Excellent)</span>
+          </div>
+        </div>
+
+        <div class="form-label" style="margin-bottom: 8px;">REMAINING USEFUL LIFE PREDICTIONS</div>
+        <div style="font-size: 0.7rem; color: var(--app-text-muted); line-height: 1.5;">
+          • Anvil Cushion: <strong>18 hours</strong> operational left (scheduled swap) <br>
+          • Hammer Seal Ring: <strong>Good</strong> (no pressure drops observed) <br>
+          • Hydraulic Accumulator charge: <strong>Good</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: AI Recommendation Centre -->
+  <div *ngIf="activeTab === 'recs'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="compass" class="panel-icon"></lucide-icon> AI Recommendation Centre</h3>
+      <span class="status-badge-inline live">Optimum Energy Solver Active</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: start;">
+      <div>
+        <div class="ai-reasoning-box" style="margin-bottom: 16px;">
+          The recommendation engine runs an optimization algorithm utilizing marine wave frequency feeds and structural strain levels to maintain peak penetration rates without stressing the pile steel.
+        </div>
+
+        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px; margin-bottom: 16px;">
+          <div class="form-label" style="margin-bottom: 8px;">CURRENT DYNAMIC DECISION PATH</div>
+          <p style="font-size: 0.75rem; line-height: 1.4; color: var(--app-text-muted); margin: 0;">
+            1. Weather is stable (wave height {{ state.waveHeight }}m within 1.5m tolerance). <br>
+            2. Soil resistance is rising gradually. Medium Dense Sand is shifting. <br>
+            3. Recommended Energy setting calculated: <strong>85%</strong> (Previous setting: 82%). <br>
+            4. Recommended Blow Rate calculated: <strong>35 bpm</strong> (Previous: 34 bpm).
+          </p>
+        </div>
+
+        <div class="grid-2">
+          <ion-button expand="block" fill="outline" class="industrial-btn" (click)="exportRecommendations()">
+            Export Report
+          </ion-button>
+          <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="applyAllRecommendations()">
+            Apply All Settings
+          </ion-button>
+        </div>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px;">
+        <div class="form-label" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 6px;">RECOMMENDED SETTINGS LIST</div>
+        
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-row-label">Recommended Energy</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan);">85%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Recommended Blow Rate</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan);">35 bpm</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Cushion Configuration</span>
+            <span class="metric-row-value">Anvil Standard (No Change)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Operating Style Goal</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">Optimized Penetration</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: Digital Twin - Installation Overview -->
+  <div *ngIf="activeTab === 'twin'" class="industrial-card" style="padding: 20px;">
+    <div class="panel-header-line">
+      <h3 class="panel-title"><lucide-icon name="activity" class="panel-icon"></lucide-icon> Digital Twin Offshore Overview</h3>
+      <span class="status-badge-inline live">Simulating 3D telemetry</span>
+    </div>
+
+    <div class="grid-2" style="grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: start;">
+      <!-- Interactive 2D SVG Digital Twin -->
+      <div>
+        <div class="form-label" style="margin-bottom: 8px;">LIVE MONOPILE TELEMETRY CANVAS</div>
+        <div class="digital-twin-container">
+          <!-- Wave Water Layer (Upper part) -->
+          <div class="water-layer"></div>
+          
+          <!-- Van Oord Aeolus Vessel -->
+          <div class="vessel-twin">
+            AEOLUS
+          </div>
+          <div class="crane-arm-twin"></div>
+
+          <!-- Soil Layers (Lower part) -->
+          <div class="sea-floor">
+            <div class="soil-twin-layer" style="background: rgba(141, 110, 99, 0.08);">Soft Clay (0 - 12m)</div>
+            <div class="soil-twin-layer" style="background: rgba(255, 235, 156, 0.05);">Silt / Sand (12 - 28m)</div>
+            <div class="soil-twin-layer" style="background: rgba(251, 192, 45, 0.08);">Dense Sand (28 - 42m)</div>
+            <div class="soil-twin-layer" style="background: rgba(120, 144, 156, 0.1);">Rock Bed (&gt;42m)</div>
+          </div>
+
+          <!-- Monopile drawing, height based on actual penetration -->
+          <!-- Piling starts at water level (top: 30px) and penetrates. Height is 150px.
+               If depth is 32.4m, seabed is at 110px. Pile tip has penetrated.
+               Let's render a gorgeous vertical pile section. -->
+          <div class="twin-pile" 
+               [style.top.px]="30" 
+               [style.height.px]="130" 
+               [style.left.%]="twinZoom ? 47 : 50"
+               [style.width.px]="twinZoom ? 22 : 14"
+               style="cursor: pointer;"
+               (click)="clickTwinPile()"
+               title="Click to view detailed pile analytics">
+          </div>
+
+          <!-- Water depth line indicator -->
+          <div style="position: absolute; top: 70px; right: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--app-accent-cyan);">
+            Water Depth: 42.0m
+          </div>
+          
+          <div style="position: absolute; bottom: 40px; right: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--app-accent-green);">
+            Penetration: {{ state.currentDepth }}m
+          </div>
+
+          <!-- Legends -->
+          <div class="twin-soil-legend">
+            <div class="legend-dot-wrapper">
+              <span class="legend-dot" style="background: rgba(141, 110, 99, 0.2);"></span>
+              <span>Clay</span>
+            </div>
+            <div class="legend-dot-wrapper">
+              <span class="legend-dot" style="background: rgba(251, 192, 45, 0.2);"></span>
+              <span>Sand</span>
+            </div>
+            <div class="legend-dot-wrapper">
+              <span class="legend-dot" style="background: rgba(120, 144, 156, 0.2);"></span>
+              <span>Rock</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls for Digital Twin -->
+        <div class="flex-between" style="margin-top: 10px;">
+          <div style="display: flex; gap: 4px;">
+            <ion-button size="small" fill="outline" class="industrial-btn" (click)="toggleTwinZoom()">
+              <lucide-icon [name]="twinZoom ? 'minus' : 'plus'" style="width: 14px; height: 14px; margin-right: 4px;"></lucide-icon>
+              {{ twinZoom ? 'Zoom Out' : 'Zoom In' }}
+            </ion-button>
+          </div>
+          <span style="font-size: 0.65rem; color: var(--app-text-muted);">Click monopile to view material details</span>
+        </div>
+      </div>
+
+      <!-- KPI sidebar -->
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--app-border); border-radius: 6px; padding: 16px;">
+        <div class="form-label" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 6px;">DIGITAL TWIN PARAMETERS</div>
+        
+        <div class="metric-list" style="margin-bottom: 16px;">
+          <div class="metric-row">
+            <span class="metric-row-label">Current Penetration Depth</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan);">{{ state.currentDepth }} m</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Pile Verticality</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">99.4%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Impact Efficiency</span>
+            <span class="metric-row-value">88%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Installation Quality</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">HIGH</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Vessel Heave Impact</span>
+            <span class="metric-row-value">LOW</span>
+          </div>
+        </div>
+
+        <p style="font-size: 0.75rem; color: var(--app-text-muted); line-height: 1.4;">
+          The Digital Twin utilizes dual-axis fiber optic sensors along the pile cylinder to model structural flexure in real-time.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</ion-content>

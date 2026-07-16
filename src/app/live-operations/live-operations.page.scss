@@ -1,0 +1,212 @@
+/* Live Operations Local SCSS */
+.cam-container {
+  position: relative;
+  border: 1px solid var(--app-border);
+  background: #000000;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cam-feed-placeholder {
+  width: 100%;
+  height: 240px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cam-overlay-dark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.cam-crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cam-crosshair::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cam-crosshair::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cam-live-indicator {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+}
+
+.cam-rec-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--app-accent-red);
+  backdrop-filter: blur(4px);
+}
+
+.cam-metadata {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: #ffffff;
+  line-height: 1.4;
+  backdrop-filter: blur(4px);
+}
+
+.cam-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  background: #0d0d0d;
+  padding: 4px 8px;
+  border-top: 1px solid var(--app-border);
+}
+
+.cam-control-btn {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  --background: transparent;
+  --color: var(--app-text-muted);
+  height: 28px;
+  width: 28px;
+  margin: 0;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.cam-control-btn:hover {
+  --color: #ffffff;
+  --background: rgba(255, 255, 255, 0.05);
+}
+
+/* Alerts Footer Bar */
+.alerts-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--app-header-bg);
+  border-top: 1px solid var(--app-border);
+  padding: 8px 16px;
+  gap: 12px;
+  flex-wrap: wrap; /* Elak layout pecah pada skrin kecil */
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0; /* Elak flex item overflow */
+}
+
+.footer-alert-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  width: fit-content;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--app-border);
+}
+
+.footer-alert-item.warn {
+  background: rgba(255, 51, 102, 0.08);
+  border-color: rgba(255, 51, 102, 0.3);
+  color: var(--app-accent-red);
+}
+
+.footer-alert-item.info {
+  background: rgba(255, 176, 0, 0.08);
+  border-color: rgba(255, 176, 0, 0.3);
+  color: var(--app-accent-amber);
+}
+
+.footer-alert-item.success {
+  background: rgba(0, 255, 157, 0.08);
+  border-color: rgba(0, 255, 157, 0.3);
+  color: var(--app-accent-green);
+}
+
+.alert-dismiss-btn {
+  cursor: pointer;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.alert-dismiss-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}

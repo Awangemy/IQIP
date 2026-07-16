@@ -1,0 +1,114 @@
+<ion-app [ngClass]="{'light-theme': !isDark}">
+  <ion-split-pane contentId="main-content" when="lg">
+    <!-- Left Sidebar Navigation -->
+    <ion-menu contentId="main-content" side="start">
+      <ion-content class="sidebar-content">
+        <!-- Logo and Branding -->
+        <div class="brand-section">
+          <div class="logo-container">
+            <svg viewBox="0 0 100 100" class="logo-svg">
+              <circle cx="50" cy="50" r="42" stroke="var(--ion-color-primary)" stroke-width="5" fill="none" class="logo-circle" />
+              <polygon points="50,15 80,45 80,85 20,85 20,45" fill="var(--ion-color-primary)" opacity="0.15" />
+              <circle cx="50" cy="50" r="14" fill="var(--ion-color-primary)" class="logo-core" />
+              <line x1="50" y1="10" x2="50" y2="90" stroke="var(--ion-color-primary)" stroke-width="2" stroke-dasharray="2,2" />
+              <line x1="10" y1="50" x2="90" y2="50" stroke="var(--ion-color-primary)" stroke-width="2" stroke-dasharray="2,2" />
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h2>IQIP</h2>
+            <h1>OVERWATCH™</h1>
+            <span class="tagline">AI Operations Intelligence</span>
+          </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ion-list lines="none" class="menu-list">
+          <ion-list-header>
+            <span class="header-text">NAV MODULES</span>
+          </ion-list-header>
+          
+          <ion-menu-toggle auto-hide="false" *ngFor="let item of menuItems">
+            <ion-item 
+              [routerLink]="[item.url]" 
+              routerDirection="root" 
+              [routerLinkActive]="'selected-item'" 
+              [routerLinkActiveOptions]="{exact: item.url !== '/dashboard'}"
+              detail="false"
+              class="menu-item-link"
+              id="menu-{{ item.title.toLowerCase().replace(' ', '-') }}"
+            >
+              <ion-icon slot="start" [name]="item.icon" class="menu-icon"></ion-icon>
+              <ion-label class="menu-label">{{ item.title }}</ion-label>
+              <ion-badge slot="end" color="primary" class="menu-badge" *ngIf="item.title === 'Live Operations'">LIVE</ion-badge>
+              <ion-badge slot="end" color="danger" class="menu-badge" *ngIf="item.title === 'Alerts'">3</ion-badge>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+
+        <!-- Sidebar footer: system status -->
+        <div class="sidebar-footer">
+          <div class="system-status-indicator">
+            <div class="status-dot pulse"></div>
+            <div class="status-meta">
+              <h3>SYSTEM STATUS</h3>
+              <p>Operational</p>
+              <span>All Systems Normal</span>
+            </div>
+          </div>
+        </div>
+      </ion-content>
+    </ion-menu>
+
+    <!-- Main Content Panel -->
+    <div class="ion-page" id="main-content">
+      <!-- High-tech Top Toolbar -->
+      <ion-header class="main-header">
+        <ion-toolbar class="header-toolbar">
+          <ion-buttons slot="start">
+            <ion-menu-button class="menu-toggle-btn"></ion-menu-button>
+          </ion-buttons>
+
+          <!-- Top Meta Grid (Vessel, Location, Weather, Status, Toggle) -->
+          <div class="header-meta-grid" *ngIf="state">
+            <div class="meta-card project-info hide-md">
+              <span class="meta-title">Project</span>
+              <span class="meta-desc">{{ state.project }}</span>
+            </div>
+            
+            <div class="meta-card vessel-info hide-sm">
+              <span class="meta-title">Vessel</span>
+              <span class="meta-desc">{{ state.vessel }}</span>
+            </div>
+
+            <div class="meta-card location-info hide-lg">
+              <span class="meta-title">Location</span>
+              <span class="meta-desc text-cyan">{{ state.location }}</span>
+            </div>
+
+            <div class="meta-card live-piling-status">
+              <span class="meta-title">Operation State</span>
+              <span class="status-pill" [ngClass]="state.drivingActive ? 'piling-active' : 'piling-paused'">
+                <span class="pill-dot"></span>
+                {{ state.drivingActive ? 'DRIVING ACTIVE' : 'DRIVING PAUSED' }}
+              </span>
+            </div>
+
+            <div class="meta-card clock-display font-mono">
+              <span class="meta-title">UTC TIMESTAMP</span>
+              <span class="clock-time">{{ liveTime | date:'dd MMM yyyy HH:mm:ss' }}</span>
+            </div>
+
+            <div class="theme-switch-cell">
+              <button class="theme-switch-btn" (click)="toggleTheme()" aria-label="Toggle Theme">
+                <ion-icon [name]="isDark ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </ion-toolbar>
+      </ion-header>
+
+      <!-- Router Outlet for pages -->
+      <ion-router-outlet class="page-content-wrapper"></ion-router-outlet>
+    </div>
+  </ion-split-pane>
+</ion-app>

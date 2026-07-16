@@ -1,0 +1,502 @@
+<ion-content class="main-page-content" scrollY="true" forceOverscroll="false">
+<div class="dashboard-container">
+  <!-- Top Quick Configuration Toolbar -->
+  <div class="flex-between" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 10px;">
+    <h2 class="panel-title" style="font-size: 1.1rem; letter-spacing: 1.5px;">
+      <lucide-icon name="activity" class="panel-icon" style="color: var(--app-accent-cyan);"></lucide-icon>
+      Operations Command Centre
+    </h2>
+    <div class="panel-header-right">
+      <!-- Auto-refresh Toggle -->
+      <div style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+        <span style="font-size: 0.75rem; color: var(--app-text-muted); font-family: 'Space Grotesk', sans-serif; font-weight: 600;">TELEMETRY STREAM:</span>
+        <ion-button size="small" [fill]="autoRefresh ? 'solid' : 'outline'" (click)="toggleAutoRefresh()" class="industrial-btn">
+          {{ autoRefresh ? 'ACTIVE (1s)' : 'PAUSED' }}
+        </ion-button>
+      </div>
+
+      <!-- Historical Time Filter -->
+      <div style="display: flex; gap: 4px;">
+        <ion-button *ngFor="let tf of timeFilters" 
+                    size="small" 
+                    [fill]="activeTimeFilter === tf ? 'solid' : 'outline'" 
+                    (click)="setTimeFilter(tf)" 
+                    class="industrial-btn"
+                    [class.active]="activeTimeFilter === tf">
+          {{ tf }}
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top KPI Grid -->
+  <div class="kpi-grid">
+    <!-- KPI 1: Installation Efficiency -->
+    <div class="industrial-card kpi-card" (click)="openKpiDetail('efficiency')">
+      <div class="kpi-left">
+        <span class="kpi-label">Lifting Cycle Efficiency</span>
+        <span class="kpi-value cyan-glow">+18%</span>
+        <span class="kpi-subtext">
+          <span class="trend-up">▲ 2.4%</span> vs planned driving rate
+        </span>
+      </div>
+      <lucide-icon name="activity" class="kpi-right-icon"></lucide-icon>
+    </div>
+
+    <!-- KPI 2: System Health -->
+    <div class="industrial-card kpi-card" (click)="openKpiDetail('health')">
+      <div class="kpi-left">
+        <span class="kpi-label">System Health Index</span>
+        <span class="kpi-value green-glow">{{ state.systemHealth }}%</span>
+        <span class="kpi-subtext">All hydraulic loops normal</span>
+      </div>
+      <lucide-icon name="shield" class="kpi-right-icon" style="color: var(--app-accent-green);"></lucide-icon>
+    </div>
+
+    <!-- KPI 3: Safety Index -->
+    <div class="industrial-card kpi-card" (click)="openKpiDetail('safety')">
+      <div class="kpi-left">
+        <span class="kpi-label">Operational Safety Index</span>
+        <span class="kpi-value" style="color: var(--app-accent-green); text-shadow: 0 0 10px rgba(0, 255, 157, 0.2);">{{ state.safetyIndex }}%</span>
+        <span class="kpi-subtext">Wind gust limits safe</span>
+      </div>
+      <lucide-icon name="compass" class="kpi-right-icon"></lucide-icon>
+    </div>
+
+    <!-- KPI 4: Data Confidence -->
+    <div class="industrial-card kpi-card" (click)="openKpiDetail('confidence')">
+      <div class="kpi-left">
+        <span class="kpi-label">Data Confidence</span>
+        <span class="kpi-value cyan-glow">{{ state.dataConfidence }}</span>
+        <span class="kpi-subtext">Dual-sensor consensus validated</span>
+      </div>
+      <lucide-icon name="check" class="kpi-right-icon"></lucide-icon>
+    </div>
+
+    <!-- KPI 5: Installation Phase -->
+    <div class="industrial-card kpi-card" (click)="openKpiDetail('phase')">
+      <div class="kpi-left">
+        <span class="kpi-label">Installation Phase</span>
+        <span class="kpi-value" style="color: var(--app-accent-amber); text-shadow: 0 0 10px rgba(255, 176, 0, 0.2); font-size: 1.4rem;">Driving</span>
+        <span class="kpi-subtext">{{ state.installationPhase }}</span>
+      </div>
+      <lucide-icon name="settings" class="kpi-right-icon"></lucide-icon>
+    </div>
+  </div>
+
+  <!-- Dashboard Bento Grid (3-columns) -->
+  <div class="dashboard-grid">
+    
+    <!-- Panel 1: Hammer Performance -->
+    <div class="industrial-card">
+      <div class="panel-header-line">
+        <h3 class="panel-title">
+          <lucide-icon name="settings" class="panel-icon"></lucide-icon>
+          Hammer Performance
+        </h3>
+        <span class="status-badge-inline live">Live telemetry</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Circular Efficiency Gauge -->
+        <div class="gauge-container">
+          <div class="circular-gauge">
+            <svg viewBox="0 0 150 150">
+              <circle class="bg-circle" cx="75" cy="75" r="65"></circle>
+              <!-- 408 is complete circle stroke-dasharray. 88% is 408 * (1 - 0.88) = 48.96 -->
+              <circle class="fg-circle green" cx="75" cy="75" r="65" stroke-dashoffset="49"></circle>
+            </svg>
+            <div class="gauge-text-wrapper">
+              <span class="gauge-number">88%</span>
+              <span class="gauge-unit">Efficiency</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric list -->
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-row-label">Hammer Blow Rate</span>
+            <span class="metric-row-value">{{ state.blowRate }} bpm</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Energy Delivered</span>
+            <span class="metric-row-value">{{ state.energyDelivered }}%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Hydraulic Pressure</span>
+            <span class="metric-row-value">{{ state.hydraulicPressure }} bar</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Oil Temperature</span>
+            <span class="metric-row-value">{{ state.oilTemperature }} °C</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Anvil Cushion Condition</span>
+            <span class="metric-row-value" [style.color]="state.cushionCondition < 50 ? 'var(--app-accent-amber)' : 'var(--app-accent-green)'">
+              {{ state.cushionCondition }}%
+            </span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Stroke Count</span>
+            <span class="metric-row-value">{{ state.blowCount }}</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid-2">
+          <ion-button expand="block" fill="outline" class="industrial-btn" (click)="openHammerDetailsModal()">
+            View Details
+          </ion-button>
+          <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="calibrateHammer()">
+            <lucide-icon name="refresh-cw" style="width: 14px; height: 14px; margin-right: 6px;" [class.pulsing-indicator]="isCalibrating"></lucide-icon>
+            {{ isCalibrating ? 'Calibrating...' : 'Calibrate' }}
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Pile Analytics -->
+    <div class="industrial-card">
+      <div class="panel-header-line">
+        <h3 class="panel-title">
+          <lucide-icon name="activity" class="panel-icon"></lucide-icon>
+          Pile Analytics
+        </h3>
+        <span class="status-badge-inline live">Dual-sensor feed</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Visual Pile Penetration Column -->
+        <div class="pile-container">
+          <div class="depth-markers">
+            <span>0m</span>
+            <span>10m</span>
+            <span>20m</span>
+            <span>30m</span>
+            <span>40m</span>
+            <span>50m</span>
+          </div>
+          
+          <div class="pile-well-wrapper">
+            <!-- Soil Layers Backdrop -->
+            <div class="soil-layers-bg">
+              <div class="soil-layer clay">Soft Clay</div>
+              <div class="soil-layer silt">Silt / Sand</div>
+              <div class="soil-layer sand">Sand Layer</div>
+              <div class="soil-layer dense-sand">Dense Sand</div>
+              <div class="soil-layer rock">Rock Bed</div>
+            </div>
+            
+            <!-- Pile Column, height based on current penetration percentage (32.4m / 50.0m = 64.8%) -->
+            <div class="physical-pile" [style.height.%]="(state.currentDepth / 50) * 100"></div>
+            <!-- Pulse ripple at pile tip -->
+            <div class="pile-tip-pulse" [style.top.%]="(state.currentDepth / 50) * 100"></div>
+          </div>
+
+          <!-- Quick Stats Overlay Inside Well -->
+          <div class="current-penetration-badge" [style.top.%]="Math.min(55, ((state.currentDepth / 50) * 100) - 10)">
+            <span class="badge-lbl">PENETRATION</span>
+            <span class="badge-val">{{ state.currentDepth }} m</span>
+            <span class="badge-lbl" style="margin-top: 4px;">TARGET</span>
+            <span class="badge-val" style="color: #ffffff; font-size: 0.75rem;">{{ state.targetDepth }} m</span>
+          </div>
+        </div>
+
+        <!-- Analytics Metrics -->
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-row-label">Penetration per Blow</span>
+            <span class="metric-row-value">{{ state.penetrationRate }} mm/blow</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Allowable Compression Stress</span>
+            <span class="metric-row-value">62% (Good)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Allowable Tension Stress</span>
+            <span class="metric-row-value">28% (Safe)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Allowable Bending Stress</span>
+            <span class="metric-row-value">31% (Safe)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Pile Verticality Alignment</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">0.6° (Good)</span>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <ion-button expand="block" fill="outline" class="industrial-btn" (click)="exportReport()">
+          <lucide-icon name="download" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+          Export Penetration Report (PDF)
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Panel 3: Weather & Vessel Motion -->
+    <div class="industrial-card">
+      <div class="panel-header-line">
+        <h3 class="panel-title">
+          <lucide-icon name="cloud-rain" class="panel-icon"></lucide-icon>
+          Weather & Vessel Motion
+        </h3>
+        <span class="status-badge-inline live">Aeolus telemetry</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Weather Info Box -->
+        <div class="grid-2">
+          <div class="metric-row" style="flex-direction: column; align-items: flex-start; padding: 10px;">
+            <span class="kpi-label">Wind Speed</span>
+            <span class="kpi-value" style="font-size: 1.25rem;">{{ state.windSpeed }} m/s</span>
+            <span class="kpi-subtext">Dir: {{ state.windDirection }}</span>
+          </div>
+
+          <div class="metric-row" style="flex-direction: column; align-items: flex-start; padding: 10px;">
+            <span class="kpi-label">Significant Wave</span>
+            <span class="kpi-value" style="font-size: 1.25rem;">{{ state.waveHeight }} m</span>
+            <span class="kpi-subtext">Current: {{ state.currentSpeed }} m/s</span>
+          </div>
+        </div>
+
+        <!-- Vessel Motion Coordinates -->
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-row-label">Vessel Heave (Vertical)</span>
+            <span class="metric-row-value">{{ state.heave }} m</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Vessel Roll (Port/Stbd)</span>
+            <span class="metric-row-value">{{ state.roll }} °</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Vessel Pitch (Bow/Stern)</span>
+            <span class="metric-row-value">{{ state.pitch }} °</span>
+          </div>
+        </div>
+
+        <!-- Weather Window Indicator -->
+        <div class="metric-row" style="background: rgba(0, 255, 157, 0.04); border-color: rgba(0, 255, 157, 0.15); padding: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="pulse-dot green"></span>
+            <span style="font-size: 0.75rem; font-weight: 700; color: var(--app-accent-green); font-family: 'Space Grotesk', sans-serif;">PILING WINDOW OK</span>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--app-text-muted);">Stable for next 6 hours</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid-2">
+          <ion-button expand="block" fill="outline" class="industrial-btn" (click)="refreshWeather()">
+            <lucide-icon name="refresh-cw" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+            Fetch Live
+          </ion-button>
+          <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="openWeatherForecastModal()">
+            <lucide-icon name="calendar" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+            6h Forecast
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Bento Row (3-columns) -->
+  <div class="dashboard-grid">
+
+    <!-- Panel 4: AI Recommendations -->
+    <div class="industrial-card" style="border-color: var(--app-card-border);">
+      <div class="panel-header-line">
+        <h3 class="panel-title" style="color: var(--app-accent-cyan);">
+          <lucide-icon name="compass" class="panel-icon" style="color: var(--app-accent-cyan);"></lucide-icon>
+          AI Decision Support
+        </h3>
+        <span class="status-badge-inline live" style="background: rgba(0, 240, 255, 0.1); border-color: var(--app-accent-cyan); color: var(--app-accent-cyan);">Core active</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- AI recommendation spark header -->
+        <div class="ai-spark-header">
+          <lucide-icon name="compass" class="ai-spark-logo"></lucide-icon>
+          <span class="ai-spark-title">Dynamic Recommendation Engine</span>
+        </div>
+
+        <div class="ai-reasoning-box">
+          Based on <strong>Medium Dense Sand</strong> and wave heave of <strong>{{ state.heave }}m</strong>, the AI recommends reducing stroke energy slightly to avoid tension overstress.
+        </div>
+
+        <!-- Recommendation metrics -->
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-row-label">Recommended Energy Setting</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan);">{{ state.recommendedEnergy }}%</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Recommended Blow Rate</span>
+            <span class="metric-row-value" style="color: var(--app-accent-cyan);">{{ state.recommendedBlowRate }} bpm</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Expected Soil Behaviour</span>
+            <span class="metric-row-value">{{ state.soilBehaviour }}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Recommendation Confidence</span>
+            <span class="metric-row-value" style="color: var(--app-accent-green);">{{ state.aiConfidence }}%</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="grid-2" *ngIf="showRecommendation">
+          <ion-button expand="block" fill="outline" class="industrial-btn" (click)="dismissRecommendation()">
+            Dismiss
+          </ion-button>
+          <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="applyRecommendation()">
+            Apply AI Settings
+          </ion-button>
+        </div>
+        <div *ngIf="!showRecommendation" style="text-align: center; font-size: 0.75rem; color: var(--app-text-muted); padding: 8px;">
+          Recommendation implemented or dismissed.
+          <ion-button size="small" fill="clear" (click)="resetRecommendation()" class="industrial-btn" style="height: auto; margin-left: 8px;">Restore</ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 5: Risk Assessment Matrix -->
+    <div class="industrial-card">
+      <div class="panel-header-line">
+        <h3 class="panel-title">
+          <lucide-icon name="shield" class="panel-icon"></lucide-icon>
+          Risk Matrix
+        </h3>
+        <span class="status-badge-inline live">Scanning...</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Risk grid list -->
+        <div class="risk-grid">
+          <div *ngFor="let risk of risks" class="risk-row" (click)="viewRiskMitigation(risk)">
+            <span class="risk-name">{{ risk.name }}</span>
+            <span class="risk-badge" [ngClass]="risk.level.toLowerCase()">{{ risk.level }}</span>
+          </div>
+        </div>
+
+        <div class="metric-row" style="padding: 10px; background: rgba(255, 255, 255, 0.01);">
+          <span style="font-size: 0.7rem; color: var(--app-text-muted);">
+            All risk categories are within tolerable thresholds. Continuously logging.
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <ion-button expand="block" fill="solid" class="industrial-btn-solid" (click)="runRiskAnalysis()">
+          <lucide-icon name="activity" style="width: 14px; height: 14px; margin-right: 6px;" [class.pulsing-indicator]="isScanningRisks"></lucide-icon>
+          {{ isScanningRisks ? 'Scanning Matrix...' : 'Run Risk Analysis Scan' }}
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Panel 6: Installation Progress -->
+    <div class="industrial-card">
+      <div class="panel-header-line">
+        <h3 class="panel-title">
+          <lucide-icon name="activity" class="panel-icon"></lucide-icon>
+          Driving Progress
+        </h3>
+        <span class="status-badge-inline live">Calculating ETA</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        <!-- Large Circular Progress Indicator -->
+        <div class="gauge-container">
+          <!-- Math: Target 45.0m, Current 32.4m -> 72% progress.
+               72% of 408 stroke-dasharray = 293.76, offset is 408 - 293.76 = 114.24 -->
+          <div class="circular-gauge">
+            <svg viewBox="0 0 150 150">
+              <circle class="bg-circle" cx="75" cy="75" r="65"></circle>
+              <!-- Dash offset depends on dynamic depth progress: (1 - (depth/target)) * 408 -->
+              <circle class="fg-circle cyan" cx="75" cy="75" r="65" [attr.stroke-dashoffset]="(1 - (state.currentDepth / state.targetDepth)) * 408"></circle>
+            </svg>
+            <div class="gauge-text-wrapper">
+              <span class="gauge-number" style="color: var(--app-accent-cyan);">
+                {{ Math.round((state.currentDepth / state.targetDepth) * 100) }}%
+              </span>
+              <span class="gauge-unit">Progress</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remaining Metrics -->
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-row-label">Depth Remaining</span>
+            <span class="metric-row-value">{{ Math.round((state.targetDepth - state.currentDepth) * 10) / 10 }} m</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Est. Completion Time</span>
+            <span class="metric-row-value">2.6 hrs</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Est. Blows Remaining</span>
+            <span class="metric-row-value">~680</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Start Time</span>
+            <span class="metric-row-value">07:45 UTC</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-row-label">Monopile ID</span>
+            <span class="metric-row-value">{{ state.pileId }}</span>
+          </div>
+        </div>
+
+        <!-- Master Operations Toggles -->
+        <div class="grid-2">
+          <ion-button expand="block" [color]="state.isOperating ? 'warning' : 'success'" fill="solid" class="industrial-btn" (click)="toggleOperation()" style="height: 32px; --color: #ffffff;">
+            <lucide-icon [name]="state.isOperating ? 'pause' : 'play'" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+            {{ state.isOperating ? 'Pause Driving' : 'Resume Piling' }}
+          </ion-button>
+          <ion-button expand="block" color="danger" fill="solid" class="industrial-btn-danger" (click)="triggerEmergencyStop()">
+            <lucide-icon name="alert-triangle" style="width: 14px; height: 14px; margin-right: 6px;"></lucide-icon>
+            EMERGENCY STOP
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quick Insights Scrolling Footer -->
+  <div class="quick-insights-footer">
+    <div class="quick-insights-lbl">Quick Insights</div>
+    <div class="insights-carousel">
+      <div class="insights-list">
+        <div class="insight-item">
+          <span class="insight-dot"></span>
+          <span>Optimal penetration rate achieved in current silt layers.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-dot"></span>
+          <span>Hammer lubrication and pressure levels are perfect.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-dot"></span>
+          <span>Weather conditions are favorable. Forecast remains safe for lifting.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-dot"></span>
+          <span>Continuous dual-transponder monitoring active with 99.8% uptime.</span>
+        </div>
+        <!-- Duplicate for loop seamless transition -->
+        <div class="insight-item">
+          <span class="insight-dot"></span>
+          <span>Optimal penetration rate achieved in current silt layers.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-dot"></span>
+          <span>Hammer lubrication and pressure levels are perfect.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</ion-content>

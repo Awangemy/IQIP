@@ -1,0 +1,578 @@
+<ion-content [scrollEvents]="true" class="before-operation-content">
+  <div class="before-operation-wrapper">
+    
+    <!-- PAGE TITLE HEADER -->
+    <div class="page-title-section">
+      <div class="title-meta">
+        <ion-badge color="primary" class="meta-badge">AI PLANNING MODULE</ion-badge>
+        <h1>Before Operation — AI Hammer Recommendation</h1>
+        <p class="subtitle text-secondary">Analyze project variables and match optimal hydraulic machinery prior to active pile driving or rock breaking sequences.</p>
+      </div>
+      
+      <!-- STEP INDICATORS -->
+      <div class="step-indicator-wrapper">
+        <div class="step-item" [class.active]="currentStep() >= 1" [class.completed]="currentStep() > 1">
+          <span class="step-num">1</span>
+          <span class="step-lbl">Conditions</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep() >= 2"></div>
+        <div class="step-item" [class.active]="currentStep() >= 2" [class.completed]="currentStep() > 2">
+          <span class="step-num">2</span>
+          <span class="step-lbl">Carrier Fleet</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep() >= 3"></div>
+        <div class="step-item" [class.active]="currentStep() >= 3" [class.completed]="currentStep() > 3">
+          <span class="step-num">3</span>
+          <span class="step-lbl">AI Processing</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep() >= 4"></div>
+        <div class="step-item" [class.active]="currentStep() >= 4">
+          <span class="step-num">4</span>
+          <span class="step-lbl">Engineering Report</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1: SELECT PROJECT CONDITIONS -->
+    <div class="step-container" *ngIf="currentStep() === 1" id="step-conditions">
+      <div class="section-instruction">
+        <h2>Step 1: Define Project & Ground Conditions</h2>
+        <p class="text-secondary">Specify materials, hardness indicators, and environmental limitations.</p>
+      </div>
+
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <!-- Material Type Cards -->
+          <ion-col size="12" class="grid-section">
+            <h3 class="input-section-title"><ion-icon name="options"></ion-icon> TARGET MATERIAL TYPE</h3>
+            <div class="custom-card-grid">
+              <div 
+                class="selector-card" 
+                [class.selected]="selectedMaterial() === 'rock'" 
+                (click)="selectMaterial('rock')"
+                id="material-rock"
+              >
+                <div class="card-glow"></div>
+                <div class="icon-circle text-magenta">
+                  <ion-icon name="construct"></ion-icon>
+                </div>
+                <div class="card-info">
+                  <h4>Rock Formations</h4>
+                  <p>Bedrock breaking, quarrying, secondary demolition, and dense aggregates.</p>
+                </div>
+                <div class="selection-indicator"></div>
+              </div>
+
+              <div 
+                class="selector-card" 
+                [class.selected]="selectedMaterial() === 'concrete'" 
+                (click)="selectMaterial('concrete')"
+                id="material-concrete"
+              >
+                <div class="card-glow"></div>
+                <div class="icon-circle text-cyan">
+                  <ion-icon name="build"></ion-icon>
+                </div>
+                <div class="card-info">
+                  <h4>Concrete Structures</h4>
+                  <p>Reinforced slabs, foundations, bridge deck removals, and commercial buildings.</p>
+                </div>
+                <div class="selection-indicator"></div>
+              </div>
+
+              <div 
+                class="selector-card" 
+                [class.selected]="selectedMaterial() === 'soil'" 
+                (click)="selectMaterial('soil')"
+                id="material-soil"
+              >
+                <div class="card-glow"></div>
+                <div class="icon-circle text-green">
+                  <ion-icon name="globe"></ion-icon>
+                </div>
+                <div class="card-info">
+                  <h4>Soil & Foundations</h4>
+                  <p>Pile driving, utility sheet piling, dense sand beds, and silty seabeds.</p>
+                </div>
+                <div class="selection-indicator"></div>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Dynamic Hardness / Strength Subsections -->
+          <ion-col size="12" class="grid-section ion-margin-top" *ngIf="selectedMaterial() === 'rock'">
+            <h3 class="input-section-title"><ion-icon name="speedometer"></ion-icon> ROCK HARDNESS PROFILE (COMPRESSIVE STRENGTH)</h3>
+            <div class="segmented-grid">
+              <div class="segment-card" [class.active]="selectedRockHardness() === 'soft'" (click)="selectRockHardness('soft')">
+                <span>Soft (&lt;50 MPa)</span>
+                <p>Sandstones, Shale, Coquina</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedRockHardness() === 'medium'" (click)="selectRockHardness('medium')">
+                <span>Medium (50-100 MPa)</span>
+                <p>Limestones, Calcitic rocks</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedRockHardness() === 'hard'" (click)="selectRockHardness('hard')">
+                <span>Hard (100-150 MPa)</span>
+                <p>Granites, Dolomite, Quartz</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedRockHardness() === 'extreme'" (click)="selectRockHardness('extreme')">
+                <span>Extremely Hard (&gt;150 MPa)</span>
+                <p>Basalt, Dense Quartzite</p>
+              </div>
+            </div>
+          </ion-col>
+
+          <ion-col size="12" class="grid-section ion-margin-top" *ngIf="selectedMaterial() === 'concrete'">
+            <h3 class="input-section-title"><ion-icon name="speedometer"></ion-icon> CONCRETE STRENGTH RATING</h3>
+            <div class="segmented-grid">
+              <div class="segment-card" [class.active]="selectedConcreteStrength() === 'low'" (click)="selectConcreteStrength('low')">
+                <span>Low / Standard (C20/25)</span>
+                <p>Residential footers & brickworks</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedConcreteStrength() === 'standard'" (click)="selectConcreteStrength('standard')">
+                <span>Structural (C30/37)</span>
+                <p>Beams, elevated slabs, standard walls</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedConcreteStrength() === 'high'" (click)="selectConcreteStrength('high')">
+                <span>High-Strength (C45/55)</span>
+                <p>Industrial foundations, heavy pillars</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedConcreteStrength() === 'ultra'" (click)="selectConcreteStrength('ultra')">
+                <span>Ultra-High (C60+)</span>
+                <p>Containment, heavy bridge piers</p>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Ground Condition Selection -->
+          <ion-col size="12" class="grid-section ion-margin-top">
+            <h3 class="input-section-title"><ion-icon name="analytics"></ion-icon> GROUND STRATA CONDITION</h3>
+            <div class="segmented-grid gap-4">
+              <div class="segment-card" [class.active]="selectedGroundCondition() === 'stable'" (click)="selectGroundCondition('stable')">
+                <span>Stable Ground</span>
+                <p>Firm consolidated dry clay or soilbed</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedGroundCondition() === 'clay'" (click)="selectGroundCondition('clay')">
+                <span>Dense Clay / Silt</span>
+                <p>Cohesive sticky soil profiles</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedGroundCondition() === 'loose_sand'" (click)="selectGroundCondition('loose_sand')">
+                <span>Loose Sand / Silt</span>
+                <p>Elastic non-cohesive sandy horizons</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedGroundCondition() === 'gravel'" (click)="selectedGroundCondition.set('gravel')">
+                <span>Dense Gravel & Cobbles</span>
+                <p>High impedance pebble composite layers</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedGroundCondition() === 'saturated'" (click)="selectGroundCondition('saturated')">
+                <span>Saturated / Muddy</span>
+                <p>Water-logged high pore pressure site</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedGroundCondition() === 'offshore'" (click)="selectGroundCondition('offshore')">
+                <span>Offshore Seabed</span>
+                <p>Deep subsea marine jacket piling conditions</p>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Working Environment Options -->
+          <ion-col size="12" class="grid-section ion-margin-top">
+            <h3 class="input-section-title"><ion-icon name="cloud"></ion-icon> WORKING ENVIRONMENT CONSTRAINTS</h3>
+            <div class="segmented-grid">
+              <div class="segment-card" [class.active]="selectedWorkingEnvironment() === 'general'" (click)="selectWorkingEnvironment('general')">
+                <span>Open General Site</span>
+                <p>Unrestricted open air construction</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedWorkingEnvironment() === 'urban'" (click)="selectWorkingEnvironment('urban')">
+                <span>Urban (Noise Sensitive)</span>
+                <p>Enforce strict decibel soundproofing</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedWorkingEnvironment() === 'underwater'" (click)="selectWorkingEnvironment('underwater')">
+                <span>Underwater / Subsea</span>
+                <p>Submergible pressure supply required</p>
+              </div>
+              <div class="segment-card" [class.active]="selectedWorkingEnvironment() === 'tunnel'" (click)="selectWorkingEnvironment('tunnel')">
+                <span>Tunnel / Confined Space</span>
+                <p>Low-headroom compact reach setup</p>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- NAVIGATION ROW -->
+      <div class="wizard-nav-bar border-top ion-margin-top">
+        <div class="left-nav-meta text-secondary font-mono">
+          <span>MATERIAL: {{ selectedMaterial() | uppercase }}</span>
+          <span class="bullet-separator"></span>
+          <span>ENVIRONMENT: {{ selectedWorkingEnvironment() | uppercase }}</span>
+        </div>
+        <ion-button fill="solid" color="primary" class="nav-next-btn" (click)="nextStep()" id="btn-next-step-1">
+          Next: Machine Specs <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- STEP 2: CHOOSE MACHINE INFORMATION -->
+    <div class="step-container" *ngIf="currentStep() === 2" id="step-carrier">
+      <div class="section-instruction">
+        <h2>Step 2: Choose Machine & Carrier Specifications</h2>
+        <p class="text-secondary">Configure excavator carrier capacities and required production velocities.</p>
+      </div>
+
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <!-- Carrier / Excavator Fleet List -->
+          <ion-col size="12" class="grid-section">
+            <h3 class="input-section-title"><ion-icon name="construct"></ion-icon> SELECT CARRIER FROM EQUIPMENT FLEET</h3>
+            <div class="carrier-scroll-list">
+              <div 
+                *ngFor="let exc of excavators; let i = index" 
+                class="carrier-item-card" 
+                [class.selected]="selectedExcavatorIndex() === i"
+                (click)="selectExcavator(i)"
+              >
+                <div class="carrier-icon-cell">
+                  <svg viewBox="0 0 100 100" class="carrier-svg">
+                    <path d="M15,80 L85,80 L85,72 L70,72 L65,55 L35,55 L30,72 L15,72 Z" fill="currentColor" opacity="0.3"/>
+                    <rect x="38" y="42" width="24" height="15" fill="currentColor" opacity="0.4"/>
+                    <circle cx="28" cy="78" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <circle cx="72" cy="78" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <circle cx="50" cy="78" r="8" fill="none" stroke="currentColor" stroke-width="3"/>
+                  </svg>
+                </div>
+                <div class="carrier-details">
+                  <h4>{{ exc.model }}</h4>
+                  <span class="weight-badge font-mono">{{ exc.weight }} Tons</span>
+                </div>
+                <div class="class-tag">
+                  <ion-badge [color]="exc.weight >= 45 ? 'danger' : exc.weight >= 28 ? 'warning' : 'primary'">
+                    {{ exc.weight >= 45 ? 'ULTRA-HEAVY' : exc.weight >= 28 ? 'HEAVY' : 'UTILITY' }}
+                  </ion-badge>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Required Productivity Tuning -->
+          <ion-col size="12" class="grid-section ion-margin-top">
+            <h3 class="input-section-title"><ion-icon name="speedometer"></ion-icon> TARGET PRODUCTIVITY / TUNING LEVEL</h3>
+            <div class="productivity-cards-grid">
+              <div class="prod-card" [class.selected]="selectedProductivity() === 'standard'" (click)="selectProductivity('standard')">
+                <div class="card-title-row">
+                  <h4>Standard Eco</h4>
+                  <ion-icon name="leaf" class="text-green"></ion-icon>
+                </div>
+                <p>Focuses on maximum fuel efficiency and lowest wear rate on hydraulic circuits.</p>
+              </div>
+
+              <div class="prod-card" [class.selected]="selectedProductivity() === 'high'" (click)="selectProductivity('high')">
+                <div class="card-title-row">
+                  <h4>High Velocity</h4>
+                  <ion-icon name="flash" class="text-cyan"></ion-icon>
+                </div>
+                <p>Balances fuel economy and hammer blow rate for commercial excavators.</p>
+              </div>
+
+              <div class="prod-card" [class.selected]="selectedProductivity() === 'ultra'" (click)="selectProductivity('ultra')">
+                <div class="card-title-row">
+                  <h4>Ultra Production</h4>
+                  <ion-icon name="ribbon" class="text-magenta"></ion-icon>
+                </div>
+                <p>Delivers maximum kinetic breaking force per second. Engineered for rigid materials.</p>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Working Application -->
+          <ion-col size="12" class="grid-section ion-margin-top">
+            <h3 class="input-section-title"><ion-icon name="stats-chart"></ion-icon> WORKING APPLICATION</h3>
+            <div class="application-grid">
+              <div class="app-chip" [class.active]="selectedApplication() === 'demolition'" (click)="selectApplication('demolition')">
+                <ion-icon name="build"></ion-icon>
+                <span>Demolition</span>
+              </div>
+              <div class="app-chip" [class.active]="selectedApplication() === 'trenching'" (click)="selectApplication('trenching')">
+                <ion-icon name="options"></ion-icon>
+                <span>Trenching</span>
+              </div>
+              <div class="app-chip" [class.active]="selectedApplication() === 'quarry'" (click)="selectApplication('quarry')">
+                <ion-icon name="construct"></ion-icon>
+                <span>Quarry</span>
+              </div>
+              <div class="app-chip" [class.active]="selectedApplication() === 'road_work'" (click)="selectApplication('road_work')">
+                <ion-icon name="trail-sign"></ion-icon>
+                <span>Road Work</span>
+              </div>
+              <div class="app-chip" [class.active]="selectedApplication() === 'foundation'" (click)="selectApplication('foundation')">
+                <ion-icon name="shield-checkmark"></ion-icon>
+                <span>Foundation / Piling</span>
+              </div>
+              <div class="app-chip" [class.active]="selectedApplication() === 'general'" (click)="selectApplication('general')">
+                <ion-icon name="apps"></ion-icon>
+                <span>General Construction</span>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- NAVIGATION ROW -->
+      <div class="wizard-nav-bar border-top ion-margin-top">
+        <ion-button fill="outline" color="medium" (click)="prevStep()" class="nav-back-btn">
+          <ion-icon name="arrow-back" slot="start"></ion-icon> Back
+        </ion-button>
+        <div class="left-nav-meta text-secondary font-mono hide-sm">
+          <span>CARRIER: {{ selectedExcavator().model }} ({{ selectedExcavator().weight }}t)</span>
+        </div>
+        <ion-button fill="solid" color="primary" class="nav-next-btn animate-pulse" (click)="nextStep()" id="btn-next-step-2">
+          Run AI Recommendation Engine <ion-icon name="sparkles" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- STEP 3: AI ANALYSES THE INFORMATION (LOADING STATE) -->
+    <div class="step-container calculation-container" *ngIf="currentStep() === 3" id="step-processing">
+      <div class="ai-processing-circle-container">
+        <!-- pulsating orbit graphic -->
+        <div class="pulse-orbit">
+          <div class="orbit-center">
+            <span class="orbit-text font-display">IQIP AI</span>
+          </div>
+          <div class="spinning-ray"></div>
+          <div class="inner-glow-core"></div>
+        </div>
+      </div>
+
+      <div class="processing-meta-text">
+        <h2>Evaluating Engineering Mechanics...</h2>
+        <p class="text-secondary font-mono">Simulating hydraulic pressures and peak strain waves across available hammer configurations</p>
+      </div>
+
+      <!-- PROGRESS TRACKER -->
+      <div class="progress-bar-section font-mono">
+        <ion-progress-bar [value]="scanProgress() / 100" color="primary" class="analysis-progress-bar"></ion-progress-bar>
+        <div class="progress-labels">
+          <span>DOCKING SIMULATION ENGINES</span>
+          <span class="text-cyan font-bold">{{ scanProgress() }}%</span>
+        </div>
+      </div>
+
+      <!-- Futuristic Scroll Terminal Log -->
+      <div class="futuristic-terminal">
+        <div class="terminal-header font-mono">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+          <span class="terminal-title">OVERWATCH_AI_SHELL - VERVERSION 4.8.2-TS</span>
+        </div>
+        <div class="terminal-body font-mono">
+          <div *ngFor="let log of scanningLogs()" class="log-line">
+            <span class="text-green">[SYSTEM-OK]</span>
+            <span class="log-text">{{ log }}</span>
+          </div>
+          <div class="log-line blinking-cursor-line" *ngIf="scanProgress() < 100">
+            <span class="text-cyan">[SCANNING]</span>
+            <span class="blinking-cursor">_</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: DISPLAY ENGINEERING REPORT -->
+    <div class="step-container" *ngIf="currentStep() === 4" id="step-report">
+      
+      <!-- REPORT CONTROLS ROW -->
+      <div class="report-controls-row">
+        <ion-button fill="outline" color="medium" size="small" (click)="resetWizard()" class="back-btn">
+          <ion-icon name="refresh" slot="start"></ion-icon> Restart Selection
+        </ion-button>
+        <div class="actions">
+          <ion-button fill="outline" color="primary" size="small" (click)="copyRecommendation()">
+            <ion-icon name="copy" slot="start"></ion-icon> Copy Spec
+          </ion-button>
+          <ion-button fill="outline" color="primary" size="small" (click)="exportPDF()">
+            <ion-icon name="download" slot="start"></ion-icon> Export PDF
+          </ion-button>
+          <ion-button fill="solid" color="secondary" size="small" (click)="applyToOperations()">
+            <ion-icon name="checkmark-circle" slot="start"></ion-icon> Apply to Overwatch
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- ACTIVE SAFETY/PARAMETRIC WARNINGS -->
+      <div class="warnings-alert-box font-mono" *ngIf="configWarnings().length > 0">
+        <div class="box-header">
+          <ion-icon name="warning" class="text-warn"></ion-icon>
+          <span>DYNAMIC CRITICAL PARAMETRIC ADVISORIES ({{ configWarnings().length }})</span>
+        </div>
+        <ul class="warnings-list">
+          <li *ngFor="let w of configWarnings()">{{ w }}</li>
+        </ul>
+      </div>
+
+      <!-- MAIN REPORT GRID -->
+      <ion-grid class="ion-no-padding ion-margin-top">
+        <ion-row>
+          <!-- COLUMN 1: RECOMMENDED MODEL HERO CARD & SPECS -->
+          <ion-col size="12" size-lg="5" class="report-col">
+            <!-- Hero Hammer Card -->
+            <div class="report-hero-card">
+              <div class="glow-layer"></div>
+              <div class="hero-header">
+                <span class="sub-lbl font-mono">RECOMMENDED MODEL MATCH</span>
+                <h1 class="text-cyan">{{ recommendation().modelName }}</h1>
+                <ion-badge color="primary" class="class-badge font-mono">{{ recommendation().size }}</ion-badge>
+              </div>
+
+              <div class="compatibility-meter-block font-mono">
+                <div class="meter-labels">
+                  <span>Carrier Compatibility Index</span>
+                  <span class="text-green font-bold">100% Matches Carrier Limits</span>
+                </div>
+                <div class="meter-bar"><div class="meter-fill" style="width: 100%"></div></div>
+              </div>
+
+              <!-- Quick spec items -->
+              <div class="quick-specs-grid font-mono">
+                <div class="spec-cell">
+                  <span class="lbl">ENERGY</span>
+                  <span class="val text-green">{{ recommendation().impactEnergy }}</span>
+                </div>
+                <div class="spec-cell">
+                  <span class="lbl">FLOW RATE</span>
+                  <span class="val text-cyan">{{ recommendation().oilFlow }}</span>
+                </div>
+                <div class="spec-cell">
+                  <span class="lbl">PRESSURE</span>
+                  <span class="val text-cyan">{{ recommendation().pressure }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Full Specifications Card -->
+            <div class="ow-card ion-margin-top">
+              <div class="ow-card-header">
+                <h3><ion-icon name="list"></ion-icon> Hammer Technical Specifications</h3>
+              </div>
+              <div class="ow-card-body">
+                <div class="tech-spec-table font-mono">
+                  <div class="table-row" *ngFor="let spec of recommendation().specifications">
+                    <span class="label text-secondary">{{ spec.label }}</span>
+                    <span class="value text-primary font-semibold">{{ spec.value }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- COLUMN 2: ENGINEERING EVALUATION & ALTERNATIVES -->
+          <ion-col size="12" size-lg="7" class="report-col">
+            <!-- Mechanical Evaluation -->
+            <div class="ow-card">
+              <div class="ow-card-header">
+                <h3><ion-icon name="sparkles"></ion-icon> Mechanical Reason & AI Analysis</h3>
+                <div class="pulse-indicator"></div>
+              </div>
+              <div class="ow-card-body">
+                <p class="evaluation-paragraph text-primary">{{ recommendation().reason }}</p>
+                <div class="application-badge-box ion-margin-top font-mono">
+                  <span class="title">PRIMARY APPLICATION WORKPLACE:</span>
+                  <p class="app-text text-green"><ion-icon name="checkmark-circle"></ion-icon> {{ recommendation().bestApplication }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Advantages vs Limitations -->
+            <div class="ow-card ion-margin-top">
+              <div class="ow-card-header">
+                <h3><ion-icon name="options"></ion-icon> Operational Pros & Cons</h3>
+              </div>
+              <div class="ow-card-body pros-cons-grid font-mono">
+                <div class="pros-col">
+                  <h4 class="text-green"><ion-icon name="checkmark-circle"></ion-icon> SYSTEM ADVANTAGES</h4>
+                  <ul class="report-list">
+                    <li *ngFor="let adv of recommendation().advantages">{{ adv }}</li>
+                  </ul>
+                </div>
+                <div class="cons-col">
+                  <h4 class="text-warn"><ion-icon name="alert-circle"></ion-icon> KNOWN CONSTRAINTS</h4>
+                  <ul class="report-list">
+                    <li *ngFor="let lim of recommendation().limitations">{{ lim }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Alternative Hammer Selections -->
+            <div class="ow-card ion-margin-top">
+              <div class="ow-card-header">
+                <h3><ion-icon name="refresh"></ion-icon> Alternative Fleet Options</h3>
+              </div>
+              <div class="ow-card-body font-mono">
+                <div class="alternatives-box">
+                  <div class="alt-item" *ngFor="let alt of recommendation().alternatives">
+                    <div class="alt-header">
+                      <span class="alt-name text-cyan font-bold">{{ alt.model }}</span>
+                      <span class="alt-weight text-muted">Carrier limits: {{ alt.size }}</span>
+                    </div>
+                    <p class="alt-reason text-secondary">{{ alt.reason }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- PRE-OPERATION CHECKLISTS (SAFETY & MAINTENANCE) -->
+      <ion-grid class="ion-no-padding ion-margin-top">
+        <ion-row>
+          <!-- Safety Reminders Checklist -->
+          <ion-col size="12" size-lg="6" class="report-col">
+            <div class="ow-card height-compliance">
+              <div class="ow-card-header">
+                <h3><ion-icon name="shield-checkmark" class="text-green"></ion-icon> Pre-Operation Safety Reminders</h3>
+              </div>
+              <div class="ow-card-body compliance-list-body">
+                <p class="section-desc text-secondary">Acknowledge all high-priority safety indicators before initiating hydraulic hammer loop.</p>
+                <div class="compliance-interactive-checklist font-mono">
+                  <div class="compliance-row" *ngFor="let sf of recommendation().safetyReminders; let i = index">
+                    <label class="checkbox-container">
+                      <input type="checkbox" [id]="'safety-' + i" class="hidden-checkbox">
+                      <span class="custom-checkbox"></span>
+                      <span class="checkbox-text text-primary">{{ sf }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+
+          <!-- Maintenance Checklist -->
+          <ion-col size="12" size-lg="6" class="report-col">
+            <div class="ow-card height-compliance">
+              <div class="ow-card-header">
+                <h3><ion-icon name="settings" class="text-cyan"></ion-icon> Pre-Operation Maintenance Tasks</h3>
+              </div>
+              <div class="ow-card-body compliance-list-body">
+                <p class="section-desc text-secondary">Rigorous component alignment checklists derived from dynamic operating weight variables.</p>
+                <div class="compliance-interactive-checklist font-mono">
+                  <div class="compliance-row" *ngFor="let mt of recommendation().maintenanceReminders; let i = index">
+                    <label class="checkbox-container">
+                      <input type="checkbox" [id]="'maint-' + i" class="hidden-checkbox">
+                      <span class="custom-checkbox"></span>
+                      <span class="checkbox-text text-primary">{{ mt }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+    </div>
+
+  </div>
+</ion-content>
