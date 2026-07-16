@@ -1,10 +1,13 @@
 import angular from '@analogjs/vite-plugin-angular';
 import path from 'path';
 import { defineConfig } from 'vite';
-
 export default defineConfig(() => {
   return {
     base: '/IQIP/',
+
+    build: {
+      outDir: 'docs',
+    },
 
     plugins: [
       angular({

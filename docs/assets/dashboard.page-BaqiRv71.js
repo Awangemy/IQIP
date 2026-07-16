@@ -1,4 +1,4 @@
-import{C as v,a as g,L as h,M as o,I as c,D as w,A as k,T as R,b as C,F as S,c as P}from"./index-xrJjlaNS.js";const T=`<ion-content class="main-page-content" scrollY="true" forceOverscroll="false">
+import{C as v,a as g,L as h,M as o,I as c,D as w,A as k,T as R,b as C,F as S,c as P}from"./index-QKuR8YBD.js";const T=`<ion-content class="main-page-content" scrollY="true" forceOverscroll="false">
 <div class="dashboard-container">
   <!-- Top Quick Configuration Toolbar -->
   <div class="flex-between" style="margin-bottom: 12px; border-bottom: 1px solid var(--app-border); padding-bottom: 10px;">
